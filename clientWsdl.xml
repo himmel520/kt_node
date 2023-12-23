@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:tns="http://example.com/currency"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    targetNamespace="http://example.com/currency"
+>
+
+    <!-- Types -->
+    <types>
+        <xsd:schema targetNamespace="http://example.com/currency">
+            <xsd:element name="Valute">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="code" type="xsd:string"/>
+                        <xsd:element name="name" type="xsd:string"/>
+                        <xsd:element name="value" type="xsd:float"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:complexType name="ValuteDynamic">
+                <xsd:sequence>
+                    <xsd:element name="date" type="xsd:string"/>
+                    <xsd:element name="value" type="xsd:float"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:element name="Valutes">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="valute" type="tns:Valute" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="GetValutesRequest"/>
+
+            <xsd:element name="GetValutesResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="valutes" type="tns:Valutes"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="GetValuteRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="code" type="xsd:string"/>
+                        <xsd:element name="fromDate" type="xsd:string"/>
+                        <xsd:element name="toDate" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="GetValuteResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="valuteDynamic" type="tns:ValuteDynamic" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+
+    <!-- Message Definitions -->
+    <message name="GetValutesInputMessage">
+        <part name="request" element="tns:GetValutesRequest"/>
+    </message>
+
+    <message name="GetValutesOutputMessage">
+        <part name="response" element="tns:GetValutesResponse"/>
+    </message>
+
+    <message name="GetValuteInputMessage">
+        <part name="request" element="tns:GetValuteRequest"/>
+    </message>
+
+    <message name="GetValuteOutputMessage">
+        <part name="response" element="tns:GetValuteResponse"/>
+    </message>
+
+    <!-- Port Type -->
+    <portType name="CurrencyPortType">
+        <operation name="getValutes">
+            <input message="tns:GetValutesInputMessage"/>
+            <output message="tns:GetValutesOutputMessage"/>
+        </operation>
+
+        <operation name="getValute">
+            <input message="tns:GetValuteInputMessage"/>
+            <output message="tns:GetValuteOutputMessage"/>
+        </operation>
+    </portType>
+
+    <!-- Binding -->
+    <binding name="CurrencyBinding" type="tns:CurrencyPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <operation name="getValutes">
+            <soap:operation soapAction="http://example.com/currency#getValutes"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+
+        <operation name="getValute">
+            <soap:operation soapAction="http://example.com/currency#getValute"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+
+    <!-- Service -->
+    <service name="CurrencyService">
+        <port name="CurrencyPort" binding="tns:CurrencyBinding">
+            <soap:address location="http://localhost:3002/wsdl?wsdl"/>
+        </port>
+    </service>
+
+</definitions>
